@@ -15,7 +15,8 @@
     <input type="text" id="surname" name="surname" required><br><br>
 
     <label for="login">Login:</label><br>
-    <input type="text" id="login" name="login" required><br><br>
+    <input type="text" id="login" name="login" required onblur="checkLoginUnique()"><br><br>
+    <span id="loginError" style="color: red; display: none;">This login is already taken.</span><br><br>
 
     <label for="password">Password:</label><br>
     <input type="password" id="password" name="password" required><br><br>
@@ -27,35 +28,56 @@
 </form>
 
 <script>
-    function createUser() {
-        const formData = {
-            name: document.getElementById('name').value,
-            surname: document.getElementById('surname').value,
-            login: document.getElementById('login').value,
-            password: document.getElementById('password').value,
-            email: document.getElementById('email').value
-        };
+    function checkLoginUnique() {
+        const login = document.getElementById('login').value;
 
-        fetch('/api/users/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(response => {
-            if (response.ok) {
-                alert('User created successfully!');
-                // Optionally, you can redirect or update the UI here
+        fetch(`/api/users/checkLogin?login=${encodeURIComponent(login)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (!data.isUnique) {
+                document.getElementById('loginError').style.display = 'block';
             } else {
-                alert('Failed to create user.');
+                document.getElementById('loginError').style.display = 'none';
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred.');
-        });
+        .catch(error => console.error('Error:', error));
     }
+
+        function createUser() {
+            const loginErrorElement = document.getElementById('loginError');
+            if (loginErrorElement.style.display === 'block') {
+                alert('Please choose a different login.');
+                return;
+            }
+
+            const formData = {
+                name: document.getElementById('name').value,
+                surname: document.getElementById('surname').value,
+                login: document.getElementById('login').value,
+                password: document.getElementById('password').value,
+                email: document.getElementById('email').value
+            };
+
+            fetch('/api/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('User created successfully!');
+                    // Optionally, you can redirect or update the UI here
+                } else {
+                    alert('Failed to create user.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred.');
+            });
+        }
 </script>
 </body>
 </html>

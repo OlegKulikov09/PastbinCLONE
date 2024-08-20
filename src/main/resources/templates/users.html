@@ -22,15 +22,21 @@
     <thead>
     <tr>
         <th>ID</th>
-        <th>Username</th>
-        <th>Password</th>
+        <th>Name</th>
+        <th>Surname</th>
+        <th>Login</th>
+        <th>Pass</th>
+        <th>Email</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="user : ${users}">
         <td th:text="${user.id}"></td>
-        <td th:text="${user.username}"></td>
+        <td th:text="${user.name}"></td>
+        <td th:text="${user.surname}"></td>
+        <td th:text="${user.login}"></td>
         <td th:text="${user.password}"></td>
+        <td th:text="${user.email}"></td>
     </tr>
     </tbody>
 </table>

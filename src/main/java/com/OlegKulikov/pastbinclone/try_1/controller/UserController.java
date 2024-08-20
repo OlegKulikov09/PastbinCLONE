@@ -19,9 +19,8 @@ public class UserController {
         return userRepository.save(user);
     }
 
-    @GetMapping("/{username}")
-    public User getUserByUsername(@PathVariable String username) {
-        return userRepository.findByUsername(username);
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable int id) {return userRepository.findById(id);
     }
     @GetMapping
     public List<User> getAllUsers() {

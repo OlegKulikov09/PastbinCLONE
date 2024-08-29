@@ -1,29 +1,18 @@
 package com.OlegKulikov.pastbinclone.try_1.model;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table (name = "texts")
 public class Text {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int textId;
 
     private String title;
     private String content;
     private LocalDateTime createdTime;
-
-    @ManyToMany
-    @JoinTable(
-            name = "text_tag",
-            joinColumns = @JoinColumn(name = "text_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id")
-    )
-    private List<Tag> tags = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -40,9 +29,12 @@ public class Text {
     public LocalDateTime getCreatedTime() {
         return createdTime;
     }
+    public void setCreatedTime(LocalDateTime createdTime) {
+        this.createdTime = createdTime;
+    }
 
-    public int getId() {
-        return id;
+    public int getTextId() {
+        return textId;
     }
 
     public void setTitle(String title) {
@@ -51,13 +43,5 @@ public class Text {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public List<Tag> getTags() { return tags; }
-
-    public void setTags(List<Tag> tags) { this.tags = tags; }
-
-    public void setCreatedTime(LocalDateTime createdTime) {
-        this.createdTime = createdTime;
     }
 }

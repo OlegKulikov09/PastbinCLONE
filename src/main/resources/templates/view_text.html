@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Text</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>View Text</h1>
+    <p><strong>Title:</strong> <span th:text="${text.title}"></span></p>
+    <p><strong>Content:</strong> <span th:text="${text.content}"></span></p>
+    <p>Created Time: <span th:text="${formattedDate}"></span></p>
+</div>
+</body>
+</html>

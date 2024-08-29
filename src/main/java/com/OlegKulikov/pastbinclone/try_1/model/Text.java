@@ -1,14 +1,14 @@
 package com.OlegKulikov.pastbinclone.try_1.model;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
+@Table (name = "texts")
 public class Text {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int textId;
 
     private String title;
     private String content;
@@ -29,13 +29,12 @@ public class Text {
     public LocalDateTime getCreatedTime() {
         return createdTime;
     }
-
-    public int getId() {
-        return id;
+    public void setCreatedTime(LocalDateTime createdTime) {
+        this.createdTime = createdTime;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public int getTextId() {
+        return textId;
     }
 
     public void setTitle(String title) {
@@ -44,9 +43,5 @@ public class Text {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public void setCreatedTime(LocalDateTime createdTime) {
-        this.createdTime = createdTime;
     }
 }

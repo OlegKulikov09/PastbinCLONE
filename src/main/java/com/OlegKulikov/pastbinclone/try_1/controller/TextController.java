@@ -1,7 +1,7 @@
 package com.OlegKulikov.pastbinclone.try_1.controller;
 
-import com.OlegKulikov.pastbinclone.try_1.Repositories.TextRepository;
-import com.OlegKulikov.pastbinclone.try_1.model.Text;
+import com.OlegKulikov.pastbinclone.try_1.Repositories.*;
+import com.OlegKulikov.pastbinclone.try_1.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 @RestController
-@RequestMapping("/texts")
+@RequestMapping("/api/texts")
 public class TextController {
 
     @Autowired
@@ -21,8 +21,8 @@ public class TextController {
         return textRepository.save(text);
     }
 
-    @GetMapping("/user/{userId}")
-    public List<Text> getTextsByUserId(@PathVariable Long userId) {
-        return textRepository.findByUserId(userId);
+    @GetMapping("/user/{id}")
+    public List<Text> getTextsByUserId(@PathVariable int id) {
+        return textRepository.findByUserId(id);
     }
 }

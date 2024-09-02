@@ -11,6 +11,7 @@
     <p><strong>Title:</strong> <span th:text="${text.title}"></span></p>
     <p><strong>Content:</strong> <span th:text="${text.content}"></span></p>
     <p>Created Time: <span th:text="${formattedDate}"></span></p>
+    <p>Share this link to view your text: <a th:href="@{/texts/{id}(id=${textId})}" th:text="@{/texts/view/{id}(id=${textId})}"></a></p>
 </div>
 </body>
 </html>

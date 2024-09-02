@@ -2,20 +2,27 @@ package com.OlegKulikov.pastbinclone.try_1.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Random;
 
 @Entity
 @Table (name = "texts")
 public class Text {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int textId;
+    @PrePersist
+    public void generateId() {
+        if (this.textId == 0) {
+            Random random = new Random();
+            this.textId = 100000 + random.nextInt(900000);
+        }
+    }
 
     private String title;
     private String content;
     private LocalDateTime createdTime;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public String getTitle() {
@@ -44,4 +51,8 @@ public class Text {
     public void setContent(String content) {
         this.content = content;
     }
+
+    public User getUser() { return user; }
+
+    public void setUser(User user) { this.user = user; }
 }

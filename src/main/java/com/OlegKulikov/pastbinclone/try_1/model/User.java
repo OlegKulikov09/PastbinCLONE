@@ -2,6 +2,9 @@ package com.OlegKulikov.pastbinclone.try_1.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "userList")
 public class User {
@@ -13,6 +16,9 @@ public class User {
     private String login;
     private String password;
     private String email;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Text> texts = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -54,7 +60,11 @@ public class User {
         this.email = email;
     }
 
-    public int getUserId() {
+    public int getId() {
         return id;
     }
+
+    public List<Text> getTexts() { return texts; }
+
+    public void setTexts(List<Text> texts) { this.texts = texts; }
 }

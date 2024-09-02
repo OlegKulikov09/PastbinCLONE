@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User Page</title>
+</head>
+<body>
+<h1>Welcome! <span th:text="${user.name}"></span> <span th:text="${user.surname}"></span></h1>
+
+<h2>Info about your account:</h2>
+<p>Email: <span th:text="${user.email}"></span></p>
+<p>Login: <span th:text="${user.login}"></span></p>
+
+<h2>Your texts:</h2>
+<ul>
+    <li th:each="text : ${texts}">
+        <a th:href="@{/texts/{textId}(textId=${text.textId})}" th:text="${text.title}"></a>
+    </li>
+</ul>
+
+<a href="/texts/create">Create new text</a>
+<a href="/logout">Logout</a>
+</body>
+</html>

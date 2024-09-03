@@ -11,6 +11,31 @@
     <p><strong>Title:</strong> <span th:text="${text.title}"></span></p>
     <p><strong>Content:</strong> <span th:text="${text.content}"></span></p>
     <p>Created Time: <span th:text="${formattedDate}"></span></p>
+
+    <div th:if="${isAuthor}">
+        <a th:href="@{/texts/edit/{id}(id=${text.textId})}" class="btn btn-primary">Edit</a>
+        <form th:action="@{/texts/delete/{id}(id=${text.textId})}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </div>
+
+    <h3>Comments</h3>
+    <div th:each="comment : ${comments}">
+        <p><strong th:text="${comment.user.username}"></strong> wrote:</p>
+        <p th:text="${comment.content}"></p>
+        <p>Posted on: <span th:text="${#dates.format(comment.createdTime, 'yyyy-MM-dd HH:mm:ss')}"></span></p>
+    </div>
+
+    <div th:if="${#authentication?.principal != null}">
+        <form th:action="@{/texts/{id}/comment(id=${text.textId})}" method="post">
+            <div class="form-group">
+                <label for="content">Add a Comment</label>
+                <textarea class="form-control" id="content" name="content" rows="3" th:field="*{content}" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Post Comment</button>
+        </form>
+    </div>
+
     <p>Share this link to view your text: <a th:href="@{/texts/{id}(id=${textId})}" th:text="@{/texts/view/{id}(id=${textId})}"></a></p>
 </div>
 </body>

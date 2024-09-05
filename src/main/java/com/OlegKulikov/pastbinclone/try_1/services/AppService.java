@@ -1,22 +1,20 @@
-package com.OlegKulikov.pastbinclone.try_1;
+package com.OlegKulikov.pastbinclone.try_1.services;
+
 
 import com.OlegKulikov.pastbinclone.try_1.Repositories.UserRepository;
 import com.OlegKulikov.pastbinclone.try_1.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService {
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
+@AllArgsConstructor
+public class AppService {
+    private UserRepository repository;
     private PasswordEncoder passwordEncoder;
 
-    public void registerUser(User user) {
-        // Шифруем пароль перед сохранением
+    public void addUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        repository.save(user);
     }
 }

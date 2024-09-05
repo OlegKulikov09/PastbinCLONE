@@ -29,7 +29,9 @@ public class SecurityConfig {
                 )
                 .logout(logout ->
                         logout
-                                .permitAll()
+                                .logoutUrl("/logout") // URL для выхода
+                                .logoutSuccessUrl("/login?logout") // URL после успешного выхода
+                                .permitAll() // Разрешение всем доступ к выходу
                 );
 
         return http.build();
@@ -38,10 +40,5 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**");
     }
 }

@@ -58,6 +58,7 @@ public class TextWebController {
         model.addAttribute("formattedDate", text.getCreatedTime().format(formatter));
         return "view_text"; // имя HTML шаблона для просмотра текста
     }
+
     @GetMapping("/edit/{textId}")
     public String showEditTextForm(@PathVariable("textId") int textId, HttpSession session, Model model) {
         User currentUser = (User) session.getAttribute("currentUser");
@@ -88,20 +89,6 @@ public class TextWebController {
         }
     }
 
-    @PostMapping("/delete/{textId}")
-    public String deleteText(@PathVariable("textId") int textId, HttpSession session, Model model) {
-        User currentUser = (User) session.getAttribute("currentUser");
-        Text text = textRepository.findById(textId).orElseThrow(() -> new IllegalArgumentException("Invalid text Id:" + textId));
-
-        if (currentUser != null && text.getUser().getId() == currentUser.getId()) {
-            textRepository.delete(text);
-            return "redirect:/texts";
-        } else {
-            model.addAttribute("errorMessage", "You are not authorized to delete this text.");
-            return "redirect:/texts/" + textId;
-        }
-    }
-
     @PostMapping("/{textId}/comment")
     public String addComment(@PathVariable("textId") int textId, @ModelAttribute UserComment userComment, HttpSession session, Model model) {
         User currentUser = (User) session.getAttribute("currentUser");
@@ -115,6 +102,20 @@ public class TextWebController {
         } else {
             model.addAttribute("errorMessage", "You need to be logged in to comment.");
             return "redirect:/login";
+        }
+    }
+
+    @PostMapping("/delete/{textId}")
+    public String deleteText(@PathVariable("textId") int textId, HttpSession session, Model model) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        Text text = textRepository.findById(textId).orElseThrow(() -> new IllegalArgumentException("Invalid text Id:" + textId));
+
+        if (currentUser != null && text.getUser().getId() == currentUser.getId()) {
+            textRepository.delete(text);
+            return "redirect:/texts";
+        } else {
+            model.addAttribute("errorMessage", "You are not authorized to delete this text.");
+            return "redirect:/texts/" + textId;
         }
     }
 }

@@ -6,7 +6,11 @@ import com.OlegKulikov.pastbinclone.try_1.services.AppService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +18,8 @@ import java.util.Optional;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/users")
+@Controller
+@RequestMapping
 @AllArgsConstructor
 public class UserWebController {
     @Autowired
@@ -25,6 +29,7 @@ public class UserWebController {
     private AppService service;
 
     @GetMapping("/home")
+    @ResponseBody
     public String welcome(){
         return "Welcome to the unprotected page";
     }
@@ -38,20 +43,46 @@ public class UserWebController {
     }
 
     @GetMapping("/user/{id}")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
-    public String getUserPage(@PathVariable("id") int id, Model model, HttpSession session) {
-        User currentUser = (User) session.getAttribute("currentUser");
+    @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
+    public String getUserPage(@PathVariable("id") int id, Model model, @AuthenticationPrincipal User currentUser) {
+        Optional<User> viewedUser = userRepository.findById(id);
+        // Проверка, что текущий пользователь может просматривать запрашиваемую страницу
+        if (currentUser.getId() != id && !"ROLE_ADMIN".equals(currentUser.getRole())) {
+            throw new AccessDeniedException("You are not allowed to view this page.");
+        }
+
+        // Загрузка текстов по ID пользователя
         List<Text> texts = textRepository.findByUserId(id);
+
+        // Добавление данных в модель
         model.addAttribute("user", currentUser);
         model.addAttribute("texts", texts);
+
         return "user_page";
     }
 
+    // Метод для отображения формы регистрации
+    @GetMapping("/registration")
+    public String showRegistrationForm() {
+        return "registration";  // Вернет шаблон регистрации (например, registration.html)
+    }
 
+    @PostMapping("/registration")
+    public String addUser(@RequestParam String name,
+                          @RequestParam String surname,
+                          @RequestParam String login,
+                          @RequestParam String password,
+                          @RequestParam String email,
+                          @RequestParam String role) {
+        User user = new User();
+        user.setName(name);
+        user.setSurname(surname);
+        user.setLogin(login);
+        user.setPassword(password);
+        user.setEmail(email);
+        user.setRole(role);
 
-    @PostMapping("/new_user")
-    public String addUser(@RequestBody User user) {
         service.addUser(user);
-        return "User is saved";
+        return "redirect:/user/" + user.getId();
     }
 }

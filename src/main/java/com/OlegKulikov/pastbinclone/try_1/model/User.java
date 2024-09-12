@@ -2,6 +2,7 @@ package com.OlegKulikov.pastbinclone.try_1.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.List;

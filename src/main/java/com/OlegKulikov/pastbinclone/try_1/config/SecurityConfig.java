@@ -1,10 +1,12 @@
 package com.OlegKulikov.pastbinclone.try_1.config;
 
 import com.OlegKulikov.pastbinclone.try_1.services.MyUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,25 +25,28 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/", "/texts/**", "/registration", "/login", "/home").permitAll()
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/", "/texts/**", "/login", "/home").permitAll()
+                        .requestMatchers("/registration").anonymous()
+                        .requestMatchers("/users").hasRole("ADMIN")
+                        //.requestMatchers("/user_page/**").hasRole("USER")
                         .anyRequest().authenticated())
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
                 .build();
     }
     @Bean
-    public UserDetailsService userDetailsService() {
-        return new MyUserDetailsService();
-    }
-    @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService());
-        provider.setPasswordEncoder(passwordEncoder());
+        provider.setUserDetailsService(userDetailsService());  // Используйте бин напрямую
+        provider.setPasswordEncoder(bCryptPasswordEncoder());  // Используйте бин напрямую
         return provider;
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public UserDetailsService userDetailsService() {
+        return new MyUserDetailsService();
+    }
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

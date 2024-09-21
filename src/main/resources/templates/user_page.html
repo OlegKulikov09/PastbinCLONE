@@ -4,7 +4,8 @@
     <title>User Page</title>
 </head>
 <body>
-<h1>Welcome! <span th:text="${user.name}"></span> <span th:text="${user.surname}"></span></h1>
+<h1 th:if="${user != null}">Welcome! <span th:text="${user.name}"></span> <span th:text="${user.surname}"></span></h1>
+<h1 th:if="${user == null}">User not found</h1>
 
 <h2>Info about your account:</h2>
 <p>Email: <span th:text="${user.email}"></span></p>
@@ -18,6 +19,13 @@
 </ul>
 
 <a href="/texts/create">Create new text</a>
-<a href="/logout">Logout</a>
+<br>
+<a href="/logout"
+   onclick="return confirm('Are you sure you want to logout?');"
+   class="button">Logout</a>
+<br>
+<form action="@{/user/{id}/delete(id=${user.id})}" method="post" onsubmit="return confirm('Are you sure you want to delete your account?');">
+    <button type="submit">Delete Account</button>
+</form>
 </body>
 </html>

@@ -1,8 +1,6 @@
 package com.OlegKulikov.pastbinclone.try_1.services;
 
-import com.OlegKulikov.pastbinclone.try_1.Repositories.RoleRepository;
 import com.OlegKulikov.pastbinclone.try_1.Repositories.UserRepository;
-import com.OlegKulikov.pastbinclone.try_1.model.Role;
 import com.OlegKulikov.pastbinclone.try_1.model.User;
 import jakarta.transaction.Transactional;
 import org.hibernate.Hibernate;
@@ -13,20 +11,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
     @Override
@@ -37,23 +32,25 @@ public class MyUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
         Hibernate.initialize(user.getTexts());
-        Hibernate.initialize(user.getRoles());
-        Set<GrantedAuthority> grantedAuthorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toSet());
-        return user;
+        Set<GrantedAuthority> grantedAuthorities = Collections.singleton(
+                new SimpleGrantedAuthority(user.getRole())  // Используем строку в качестве роли
+        );
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getLogin(),
+                user.getPassword(),
+                grantedAuthorities
+        );
     }
     public List<User> allUsers() {
         return userRepository.findAll();
     }
     public boolean saveUser(User user) {
-        User userFromDB = userRepository.findByLogin(user.getUsername());
-
-        if (userFromDB != null) {
+        Optional<User> userFromDB = userRepository.findById(user.getId());
+        if (userFromDB.isPresent()) {
             return false;
         }
-        Role roleUser = roleRepository.findByName("ROLE_USER");
-        user.setRoles(Collections.singleton(roleUser));
+        user.setRole("ROLE_USER");
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return true;

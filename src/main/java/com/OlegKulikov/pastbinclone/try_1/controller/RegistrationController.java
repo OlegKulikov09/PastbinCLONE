@@ -4,7 +4,6 @@ import com.OlegKulikov.pastbinclone.try_1.model.User;
 import com.OlegKulikov.pastbinclone.try_1.services.MyUserDetailsService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,9 +29,9 @@ public class RegistrationController {
             return "registration";
         }
         if (!myUserDetailsService.saveUser(userForm)){
-            model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
+            model.addAttribute("usernameError", "Login already exists");
             return "registration";
         }
-        return "redirect:/user/" + userForm.getId();
+        return "redirect:/login";
     }
 }

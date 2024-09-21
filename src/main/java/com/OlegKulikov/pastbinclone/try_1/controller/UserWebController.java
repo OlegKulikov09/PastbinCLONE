@@ -2,14 +2,13 @@ package com.OlegKulikov.pastbinclone.try_1.controller;
 
 import com.OlegKulikov.pastbinclone.try_1.Repositories.*;
 import com.OlegKulikov.pastbinclone.try_1.model.*;
-import com.OlegKulikov.pastbinclone.try_1.services.AppService;
-import jakarta.servlet.http.HttpSession;
+import com.OlegKulikov.pastbinclone.try_1.services.MyUserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +25,8 @@ public class UserWebController {
     private UserRepository userRepository;
     @Autowired
     private TextRepository textRepository;
-    private AppService service;
+    @Autowired
+    private MyUserDetailsService myUserDetailsService;
 
     @GetMapping("/home")
     @ResponseBody
@@ -36,20 +36,22 @@ public class UserWebController {
 
     @GetMapping("/user/{id}")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public String getUserPage(@PathVariable("id") int id, Model model, @AuthenticationPrincipal User currentUser) {
-        Optional<User> viewedUser = userRepository.findById(id);
-        // Проверка, что текущий пользователь может просматривать запрашиваемую страницу
-        if (currentUser.getId() != id) {
+    public String getUserPage(@PathVariable("id") int id, Model model, @AuthenticationPrincipal UserDetails currentUser) {
+        User user = userRepository.findByLogin(currentUser.getUsername());
+        if (user == null || user.getId() != id) {
             throw new AccessDeniedException("You are not allowed to view this page.");
         }
-
         // Загрузка текстов по ID пользователя
         List<Text> texts = textRepository.findByUserId(id);
-
-        // Добавление данных в модель
-        model.addAttribute("user", currentUser);
+        model.addAttribute("user", user);
         model.addAttribute("texts", texts);
 
         return "user_page";
+    }
+    @PostMapping("/user/{id}/delete")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public String deleteUser(@PathVariable("id") int id) {
+        myUserDetailsService.deleteUser(id);
+        return "redirect:/logout";
     }
 }

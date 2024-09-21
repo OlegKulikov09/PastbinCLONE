@@ -25,11 +25,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/", "/texts/**", "/login", "/home").permitAll()
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/", "/texts/{textId:[0-9]+}", "/login", "/home").permitAll()
                         .requestMatchers("/registration").anonymous()
                         .requestMatchers("/users").hasRole("ADMIN")
-                        //.requestMatchers("/user_page/**").hasRole("USER")
-                        .anyRequest().authenticated())
+                        .anyRequest().hasAnyRole("USER", "ADMIN"))
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
                 .build();
     }

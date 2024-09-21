@@ -37,6 +37,7 @@ public class MyUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
         Hibernate.initialize(user.getTexts());
+        Hibernate.initialize(user.getRoles());
         Set<GrantedAuthority> grantedAuthorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toSet());

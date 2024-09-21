@@ -3,10 +3,12 @@ package com.OlegKulikov.pastbinclone.try_1.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import jakarta.validation.constraints.Size;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 @Entity
@@ -23,6 +25,11 @@ public class User implements UserDetails {
     private String password;
     private String email;
     @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_list_roles", // таблица связи
+            joinColumns = @JoinColumn(name = "users_id"), // поле связи с таблицей пользователей
+            inverseJoinColumns = @JoinColumn(name = "roles_id") // поле связи с таблицей ролей
+    )
     private Set<Role> roles;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -30,7 +37,9 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());
     }
 
     @Override

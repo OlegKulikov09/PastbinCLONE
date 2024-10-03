@@ -5,6 +5,7 @@ import com.OlegKulikov.pastbinclone.try_1.model.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -36,7 +39,7 @@ public class TextWebController {
     public String showCreateTextForm(Model model, @AuthenticationPrincipal UserDetails currentUser) {
         model.addAttribute("text", new Text());
         model.addAttribute("currentUser", getCurrentUser(currentUser));
-        return "user_new_text"; // имя HTML шаблона для создания текста
+        return "user_new_text";
     }
 
     @PostMapping("/create")
@@ -50,49 +53,39 @@ public class TextWebController {
     }
 
     @GetMapping("/{textId}")
-    public String viewText(@PathVariable("textId") int textId, Model model) {
+    public String viewText(@PathVariable("textId") int textId, Model model, @AuthenticationPrincipal UserDetails currentUser) {
         Text text = textRepository.findById(textId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid text Id:" + textId));
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        if (currentUser != null) {
+            User user = getCurrentUser(currentUser);
+            model.addAttribute("user", user);
+            model.addAttribute("currentUsername", currentUser.getUsername()); // Это добавляем для использования в шаблоне
+        }
         model.addAttribute("text", text);
-        model.addAttribute("formattedDate", text.getCreatedTime().format(formatter));
         List<UserComment> comments = commentRepository.findByText(text);
         model.addAttribute("comments", comments);
-        return "view_text"; // имя HTML шаблона для просмотра текста
-    }
-
-    @GetMapping("/edit/{textId}")
-    @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public String showEditTextForm(@PathVariable("textId") int textId, Model model, @AuthenticationPrincipal UserDetails currentUser) {
-        User user = getCurrentUser(currentUser);
-        Text text = textRepository.findById(textId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid text Id:" + textId));
-
-        if (text.getUser().getId() == user.getId()) {
-            model.addAttribute("text", text);
-            return "edit_text"; // имя HTML шаблона для редактирования текста
-        } else {
-            model.addAttribute("errorMessage", "You are not authorized to edit this text.");
-            return "redirect:/texts/" + textId;
-        }
+        return "view_text";
     }
 
     @PostMapping("/edit/{textId}")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public String editText(@PathVariable("textId") int textId, @ModelAttribute Text updatedText, @AuthenticationPrincipal UserDetails currentUser) {
+    public String editText(@PathVariable("textId") int textId,
+                           @RequestParam("title") String title,
+                           @RequestParam("content") String content,
+                           @AuthenticationPrincipal UserDetails currentUser) {
         User user = getCurrentUser(currentUser);
         Text text = textRepository.findById(textId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid text Id:" + textId));
-
         if (text.getUser().getId() == user.getId()) {
-            text.setContent(updatedText.getContent());
+            text.setTitle(title);
+            text.setContent(content);
             textRepository.save(text);
             return "redirect:/texts/" + textId;
         } else {
             return "You are not authorized to edit this text.";
         }
     }
-//ИСПРАВИТЬ ЛОМАЕТ ПРОСМОТР БЕЗ РОЛИ
+
     @PostMapping("/{textId}/comment")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
     public String addComment(@PathVariable("textId") int textId, @ModelAttribute UserComment userComment, @AuthenticationPrincipal UserDetails currentUser) {
@@ -108,14 +101,14 @@ public class TextWebController {
 
     @PostMapping("/delete/{textId}")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public String deleteText(@PathVariable("textId") int textId, @ModelAttribute @AuthenticationPrincipal UserDetails currentUser) {
+    public String deleteText(@PathVariable("textId") int textId, @AuthenticationPrincipal UserDetails currentUser) {
         User user = getCurrentUser(currentUser);
         Text text = textRepository.findById(textId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid text Id:" + textId));
 
         if (text.getUser().getId() == user.getId()) {
             textRepository.delete(text);
-            return "redirect:/texts";
+            return "redirect:/user/" + user.getId();
         } else {
             return "You are not authorized to delete this text.";
         }

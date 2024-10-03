@@ -21,6 +21,7 @@ public class Text {
     }
 
     private String title;
+    @Column(length = 3000)
     private String content;
     private LocalDateTime createdTime;
 

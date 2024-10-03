@@ -4,6 +4,7 @@ import com.OlegKulikov.pastbinclone.try_1.services.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -25,7 +26,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/", "/texts/{textId:[0-9]+}", "/login", "/home").permitAll()
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/", "/login", "/home").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/texts/{textId:[0-9]+}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/texts/{textId:[0-9]+}/comment").authenticated()
                         .requestMatchers("/registration").anonymous()
                         .requestMatchers("/users").hasRole("ADMIN")
                         .anyRequest().hasAnyRole("USER", "ADMIN"))

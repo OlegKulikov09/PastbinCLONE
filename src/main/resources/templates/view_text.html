@@ -4,18 +4,40 @@
     <meta charset="UTF-8">
     <title>View Text</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script>
+        function toggleEdit() {
+            var editForm = document.getElementById("editForm");
+            editForm.style.display = editForm.style.display === "none" ? "block" : "none";
+        }
+    </script>
 </head>
 <body>
 <div class="container">
     <h1>View Text</h1>
     <p><strong>Title:</strong> <span th:text="${text.title}"></span></p>
     <p><strong>Content:</strong> <span th:text="${text.content}"></span></p>
-    <p>Created Time: <span th:text="${formattedDate}"></span></p>
+    <p>Created Time: <span th:text="${text.createdTime}"></span></p>
 
-    <div th:if="${#authentication?.principal != null and text.user != null and #authentication.principal.username == text.user.login}">
-        <a th:href="@{/texts/edit/{id}(id=${text.textId})}" class="btn btn-primary">Edit</a>
+    <div th:if="${user != null and user.login == text.user.login}">
+        <button class="btn btn-primary" onclick="toggleEdit()">Edit</button>
         <form th:action="@{/texts/delete/{id}(id=${text.textId})}" method="post" style="display:inline;">
             <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </div>
+
+    <div id="editForm" style="display:none;">
+        <h3>Edit Text</h3>
+        <form th:action="@{/texts/edit/{id}(id=${text.textId})}" method="post">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" class="form-control" th:value="${text.title}" required>
+            </div>
+            <div class="form-group">
+                <label for="content">Content</label>
+                <textarea id="content" name="content" class="form-control" rows="5" required th:text="${text.content}"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <button type="button" class="btn btn-secondary" onclick="toggleEdit()">Cancel</button>
         </form>
     </div>
 
@@ -26,11 +48,11 @@
         <p>Posted on: <span th:text="${#dates.format(comment.createdTime, 'yyyy-MM-dd HH:mm:ss')}"></span></p>
     </div>
 
-    <div th:if="${#authentication?.principal != null}">
+    <div th:if="${user != null}">
         <form th:action="@{/texts/{id}/comment(id=${text.textId})}" method="post">
             <div class="form-group">
                 <label for="content">Add a Comment</label>
-                <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
+                <textarea class="form-control" id="commentContent" name="content" rows="3" required></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Post Comment</button>
         </form>

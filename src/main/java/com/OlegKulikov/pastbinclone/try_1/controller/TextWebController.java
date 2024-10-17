@@ -2,8 +2,11 @@ package com.OlegKulikov.pastbinclone.try_1.controller;
 
 import com.OlegKulikov.pastbinclone.try_1.Repositories.*;
 import com.OlegKulikov.pastbinclone.try_1.model.*;
+import com.OlegKulikov.pastbinclone.try_1.services.RatingService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,6 +32,9 @@ public class TextWebController {
 
     @Autowired
     private CommentRepository commentRepository;
+
+    @Autowired
+    private RatingService ratingService;
 
     private User getCurrentUser(@AuthenticationPrincipal UserDetails currentUser) {
         return userRepository.findByLogin(currentUser.getUsername());
@@ -112,5 +118,21 @@ public class TextWebController {
         } else {
             return "You are not authorized to delete this text.";
         }
+    }
+
+    @PostMapping("/{textId}/rate")
+    @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
+    public String rateText(@PathVariable int textId, @AuthenticationPrincipal UserDetails currentUser) {
+        User user = getCurrentUser(currentUser);
+        ratingService.changeRating(textId, user);
+        return "redirect:/texts/" + textId;
+    }
+
+    @GetMapping("/rating_all")
+    public String showRatingAllTexts(Model model) {
+        for(Text t : )
+        model.addAttribute("text", new Text());
+        model.addAttribute("currentUser", getCurrentUser(currentUser));
+        return "rating_all";
     }
 }

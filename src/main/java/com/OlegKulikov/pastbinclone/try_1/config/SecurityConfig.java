@@ -27,7 +27,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/", "/login", "/home").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/texts/{textId:[0-9]+}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/texts/{textId:[0-9]+}", "/texts/rating_all").permitAll()
                         .requestMatchers(HttpMethod.POST, "/texts/{textId:[0-9]+}/comment").authenticated()
                         .requestMatchers("/registration").anonymous()
                         .requestMatchers("/users").hasRole("ADMIN")

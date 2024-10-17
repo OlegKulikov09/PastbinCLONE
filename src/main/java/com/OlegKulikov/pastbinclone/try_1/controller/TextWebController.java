@@ -130,9 +130,8 @@ public class TextWebController {
 
     @GetMapping("/rating_all")
     public String showRatingAllTexts(Model model) {
-        for(Text t : )
-        model.addAttribute("text", new Text());
-        model.addAttribute("currentUser", getCurrentUser(currentUser));
+        List<Text> allTexts = textRepository.findAllOrderByRateDesc();
+        model.addAttribute("allTexts", allTexts);
         return "rating_all";
     }
 }

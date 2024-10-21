@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="eng">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Создать текст</title>
@@ -8,7 +8,13 @@
 <body>
 <div class="container">
     <h1>Создать текст</h1>
-    <form th:action="@{/texts/create}" th:object="${text}" method="post">
+    <p th:if="${currentUser}">
+        Вы вошли как: <span th:text="${currentUser.login}">Имя пользователя</span>
+    </p>
+    <p th:unless="${currentUser}">
+        Вы не вошли в систему. Пожалуйста, <a href="/login">войдите</a>, чтобы создать текст.
+    </p>
+    <form th:if="${currentUser}" th:action="@{/texts/create}" th:object="${text}" method="post">
         <div class="form-group">
             <label for="title">Название</label>
             <input type="text" id="title" name="title" class="form-control" th:field="*{title}" required>

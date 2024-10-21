@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Top Rated Texts</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>Top 10 Rated Texts</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Rate</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Thymeleaf each iteration -->
+        <tr th:each="text : ${topRated10Texts}">
+            <td th:text="${text.title}">Title</td>
+            <td th:text="${text.user.login}">Author</td>
+            <td th:text="${text.rate}">Rate</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

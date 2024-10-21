@@ -1,60 +1,32 @@
 package com.OlegKulikov.pastbinclone.try_1.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import jakarta.validation.constraints.Size;
+import java.util.*;
 
+@Data
 @Entity
 @Table(name = "userList")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column
     private String name;
+    @Column
     private String surname;
+    @Column
+    @Size(min = 3, message = "No less 3 letters")
     private String login;
+    @Column
+    @Size(min = 3, message = "No less 3 letters")
     private String password;
+    @Column
     private String email;
+    @Column
+    private String role;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public int getUserId() {
-        return id;
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Text> texts = new ArrayList<>();
 }

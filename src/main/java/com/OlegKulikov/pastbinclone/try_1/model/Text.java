@@ -1,47 +1,36 @@
 package com.OlegKulikov.pastbinclone.try_1.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import lombok.Data;
 
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
+
+@Data
 @Entity
 @Table (name = "texts")
 public class Text {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int textId;
+    @PrePersist
+    public void generateId() {
+        if (this.textId == 0) {
+            Random random = new Random();
+            this.textId = 100000 + random.nextInt(900000);
+        }
+    }
 
     private String title;
+    @Column(length = 3000)
     private String content;
     private LocalDateTime createdTime;
+    private int rate;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public LocalDateTime getCreatedTime() {
-        return createdTime;
-    }
-    public void setCreatedTime(LocalDateTime createdTime) {
-        this.createdTime = createdTime;
-    }
-
-    public int getTextId() {
-        return textId;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
+    @OneToMany(mappedBy = "text", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Rating> ratings = new HashSet<>();
 }

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Ratings</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>User Ratings</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Login</th>
+            <th>Total Rating</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Thymeleaf each iteration -->
+        <tr th:each="user : ${users_rate}">
+            <td th:text="${user.login}">Login</td>
+            <td th:text="${user.sumRateOfUser}">Total Rating</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

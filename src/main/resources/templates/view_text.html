@@ -21,7 +21,7 @@
 
     <div th:if="${user != null}">
         <form th:action="@{/texts/{textId}/rate(textId=${text.textId})}" method="post" style="margin-top: 10px;">
-            <button type="submit" class="btn btn-success">Raise rate of the paste</button>
+            <button type="submit" class="btn btn-success">Change rate of the post</button>
         </form>
     </div>
 
@@ -50,9 +50,9 @@
 
     <h3>Comments</h3>
     <div th:each="comment : ${comments}">
-        <p><strong th:text="${comment.user.username}"></strong> wrote:</p>
+        <p><strong th:text="${comment.user.login}"></strong> wrote:</p>
         <p th:text="${comment.content}"></p>
-        <p>Posted on: <span th:text="${#dates.format(comment.createdTime, 'yyyy-MM-dd HH:mm:ss')}"></span></p>
+        <p>Posted on: <span th:text="${text.createdTime}"></span></p>
     </div>
 
     <div th:if="${user != null}">

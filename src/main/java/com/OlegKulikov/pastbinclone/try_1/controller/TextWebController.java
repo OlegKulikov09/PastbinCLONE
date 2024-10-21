@@ -50,7 +50,8 @@ public class TextWebController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public String createText(@ModelAttribute Text text, Model model, @AuthenticationPrincipal UserDetails currentUser) {
+    public String createText(@ModelAttribute Text text, Model model,
+                             @AuthenticationPrincipal UserDetails currentUser) {
         User user = getCurrentUser(currentUser);
         text.setUser(user);
         text.setCreatedTime(LocalDateTime.now());
@@ -59,7 +60,8 @@ public class TextWebController {
     }
 
     @GetMapping("/{textId}")
-    public String viewText(@PathVariable("textId") int textId, Model model, @AuthenticationPrincipal UserDetails currentUser) {
+    public String viewText(@PathVariable("textId") int textId, Model model,
+                           @AuthenticationPrincipal UserDetails currentUser) {
         Text text = textRepository.findById(textId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid text Id:" + textId));
         if (currentUser != null) {
@@ -94,7 +96,9 @@ public class TextWebController {
 
     @PostMapping("/{textId}/comment")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public String addComment(@PathVariable("textId") int textId, @ModelAttribute UserComment userComment, @AuthenticationPrincipal UserDetails currentUser) {
+    public String addComment(@PathVariable("textId") int textId,
+                             @ModelAttribute UserComment userComment,
+                             @AuthenticationPrincipal UserDetails currentUser) {
         User user = getCurrentUser(currentUser);
         Text text = textRepository.findById(textId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid text Id:" + textId));
@@ -107,7 +111,8 @@ public class TextWebController {
 
     @PostMapping("/delete/{textId}")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public String deleteText(@PathVariable("textId") int textId, @AuthenticationPrincipal UserDetails currentUser) {
+    public String deleteText(@PathVariable("textId") int textId,
+                             @AuthenticationPrincipal UserDetails currentUser) {
         User user = getCurrentUser(currentUser);
         Text text = textRepository.findById(textId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid text Id:" + textId));
@@ -122,7 +127,8 @@ public class TextWebController {
 
     @PostMapping("/{textId}/rate")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public String rateText(@PathVariable int textId, @AuthenticationPrincipal UserDetails currentUser) {
+    public String rateText(@PathVariable int textId,
+                           @AuthenticationPrincipal UserDetails currentUser) {
         User user = getCurrentUser(currentUser);
         ratingService.changeRating(textId, user);
         return "redirect:/texts/" + textId;
@@ -130,8 +136,8 @@ public class TextWebController {
 
     @GetMapping("/rating_all")
     public String showRatingAllTexts(Model model) {
-        List<Text> allTexts = textRepository.findAllOrderByRateDesc();
-        model.addAttribute("allTexts", allTexts);
+        List<Text> topRated10Texts = textRepository.orderByRate10Desc();
+        model.addAttribute("topRated10Texts", topRated10Texts);
         return "rating_all";
     }
 }

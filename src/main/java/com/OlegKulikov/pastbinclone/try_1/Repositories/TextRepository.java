@@ -9,6 +9,6 @@ import java.util.List;
 public interface TextRepository extends JpaRepository<Text, Integer> {
     List<Text> findByUserId(int id);
     List<Text> findByTextId(int textId);
-    @Query(value = "SELECT * FROM texts ORDER BY rate DESC", nativeQuery = true)
-    List<Text> findAllOrderByRateDesc();
+    @Query(value = "SELECT * FROM texts ORDER BY rate DESC LIMIT 10", nativeQuery = true)
+    List<Text> orderByRate10Desc();
 }

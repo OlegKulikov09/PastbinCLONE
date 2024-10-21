@@ -3,6 +3,7 @@ package com.OlegKulikov.pastbinclone.try_1.controller;
 import com.OlegKulikov.pastbinclone.try_1.Repositories.*;
 import com.OlegKulikov.pastbinclone.try_1.model.*;
 import com.OlegKulikov.pastbinclone.try_1.services.MyUserDetailsService;
+import jakarta.persistence.Tuple;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -13,12 +14,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import java.util.List;
 
 @Controller
-@RequestMapping
 @AllArgsConstructor
 public class UserWebController {
     @Autowired
@@ -53,5 +54,20 @@ public class UserWebController {
     public String deleteUser(@PathVariable("id") int id) {
         myUserDetailsService.deleteUser(id);
         return "redirect:/logout";
+    }
+    @GetMapping("/users_rate")
+    public String showUsersRate(Model model) {
+        List<Tuple> usersRate = userRepository.allUsersOrderByRate();
+        List<UserDTO> usersList = new ArrayList<>();
+
+        for (Tuple tuple : usersRate) {
+            int id = tuple.get(0, Integer.class);
+            String login = tuple.get(1, String.class);
+            int sumRateOfUser = tuple.get(2, Long.class).intValue();
+            usersList.add(new UserDTO(id, login, sumRateOfUser));
+        }
+
+        model.addAttribute("users_rate", usersList);
+        return "users_rate";
     }
 }

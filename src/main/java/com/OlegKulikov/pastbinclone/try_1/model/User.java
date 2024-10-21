@@ -2,13 +2,8 @@ package com.OlegKulikov.pastbinclone.try_1.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import jakarta.validation.constraints.Size;
-
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Data
 @Entity

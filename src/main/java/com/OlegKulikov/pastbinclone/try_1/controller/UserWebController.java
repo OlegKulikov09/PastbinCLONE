@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @AllArgsConstructor
@@ -37,9 +38,9 @@ public class UserWebController {
 
     @GetMapping("/user/{id}")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public String getUserPage(@PathVariable("id") int id, Model model, @AuthenticationPrincipal UserDetails currentUser) {
+    public String getUserPage(@PathVariable("id") UUID id, Model model, @AuthenticationPrincipal UserDetails currentUser) {
         User user = userRepository.findByLogin(currentUser.getUsername());
-        if (user == null || user.getId() != id) {
+        if (user == null || id.equals(user.getId())) {
             throw new AccessDeniedException("You are not allowed to view this page.");
         }
         // Загрузка текстов по ID пользователя
@@ -49,9 +50,9 @@ public class UserWebController {
 
         return "user_page";
     }
-    @PostMapping("/user/{id}/delete")
+    @DeleteMapping("/user/{id}/delete")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public String deleteUser(@PathVariable("id") int id) {
+    public String deleteUser(@PathVariable("id") UUID id) {
         myUserDetailsService.deleteUser(id);
         return "redirect:/logout";
     }
@@ -61,7 +62,7 @@ public class UserWebController {
         List<UserDTO> usersList = new ArrayList<>();
 
         for (Tuple tuple : usersRate) {
-            int id = tuple.get(0, Integer.class);
+            UUID id = tuple.get(0, UUID.class);
             String login = tuple.get(1, String.class);
             int sumRateOfUser = tuple.get(2, Long.class).intValue();
             usersList.add(new UserDTO(id, login, sumRateOfUser));

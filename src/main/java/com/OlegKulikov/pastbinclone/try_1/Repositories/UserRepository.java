@@ -9,9 +9,10 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface UserRepository extends JpaRepository<User, Integer> {
-        Optional <User> findById(int id);
+public interface UserRepository extends JpaRepository<User, UUID> {
+        Optional <User> findById(UUID id);
         User findByLogin(String login);
         @Query(value =
                 "SELECT u.id, u.login, SUM(t.rate) AS sumRateOfUser " +

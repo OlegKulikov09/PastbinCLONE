@@ -10,8 +10,8 @@ import java.util.*;
 @Table(name = "userList")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
     @Column
     private String name;
     @Column

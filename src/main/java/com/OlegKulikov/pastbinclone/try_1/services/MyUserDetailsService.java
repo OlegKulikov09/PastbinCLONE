@@ -13,10 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {
@@ -45,17 +42,14 @@ public class MyUserDetailsService implements UserDetailsService {
     public List<User> allUsers() {
         return userRepository.findAll();
     }
+
     public boolean saveUser(User user) {
-        Optional<User> userFromDB = userRepository.findById(user.getId());
-        if (userFromDB.isPresent()) {
-            return false;
-        }
         user.setRole("ROLE_USER");
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return true;
     }
-    public void deleteUser(int id) {
+    public void deleteUser(UUID id) {
         if (userRepository.findById(id).isPresent()) {
             userRepository.deleteById(id);
         }

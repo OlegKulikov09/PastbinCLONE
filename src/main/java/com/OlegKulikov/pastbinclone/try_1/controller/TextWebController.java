@@ -3,6 +3,7 @@ package com.OlegKulikov.pastbinclone.try_1.controller;
 import com.OlegKulikov.pastbinclone.try_1.Repositories.*;
 import com.OlegKulikov.pastbinclone.try_1.model.*;
 import com.OlegKulikov.pastbinclone.try_1.services.RatingService;
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/texts")
@@ -60,14 +62,14 @@ public class TextWebController {
     }
 
     @GetMapping("/{textId}")
-    public String viewText(@PathVariable("textId") int textId, Model model,
+    public String viewText(@PathVariable("textId") String textId, Model model,
                            @AuthenticationPrincipal UserDetails currentUser) {
         Text text = textRepository.findById(textId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid text Id:" + textId));
         if (currentUser != null) {
             User user = getCurrentUser(currentUser);
             model.addAttribute("user", user);
-            model.addAttribute("currentUsername", currentUser.getUsername()); // Это добавляем для использования в шаблоне
+            model.addAttribute("currentUsername", currentUser.getUsername());
         }
         model.addAttribute("text", text);
         List<UserComment> comments = commentRepository.findByText(text);
@@ -75,9 +77,9 @@ public class TextWebController {
         return "view_text";
     }
 
-    @PostMapping("/edit/{textId}")
+    @PutMapping("/edit/{textId}")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public String editText(@PathVariable("textId") int textId,
+    public String editText(@PathVariable("textId") String textId,
                            @RequestParam("title") String title,
                            @RequestParam("content") String content,
                            @AuthenticationPrincipal UserDetails currentUser) {
@@ -96,7 +98,7 @@ public class TextWebController {
 
     @PostMapping("/{textId}/comment")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public String addComment(@PathVariable("textId") int textId,
+    public String addComment(@PathVariable("textId") String textId,
                              @ModelAttribute UserComment userComment,
                              @AuthenticationPrincipal UserDetails currentUser) {
         User user = getCurrentUser(currentUser);
@@ -109,9 +111,9 @@ public class TextWebController {
         return "redirect:/texts/" + textId;
     }
 
-    @PostMapping("/delete/{textId}")
+    @DeleteMapping("/delete/{textId}")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public String deleteText(@PathVariable("textId") int textId,
+    public String deleteText(@PathVariable("textId") String textId,
                              @AuthenticationPrincipal UserDetails currentUser) {
         User user = getCurrentUser(currentUser);
         Text text = textRepository.findById(textId)
@@ -127,7 +129,7 @@ public class TextWebController {
 
     @PostMapping("/{textId}/rate")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public String rateText(@PathVariable int textId,
+    public String rateText(@PathVariable String textId,
                            @AuthenticationPrincipal UserDetails currentUser) {
         User user = getCurrentUser(currentUser);
         ratingService.changeRating(textId, user);

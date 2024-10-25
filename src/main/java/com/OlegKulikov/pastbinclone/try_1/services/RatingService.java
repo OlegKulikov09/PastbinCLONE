@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class RatingService {
@@ -17,7 +18,7 @@ public class RatingService {
     @Autowired
     private TextRepository textRepository;
 
-    public void changeRating(int textId, User user) {
+    public void changeRating(String textId, User user) {
         Text text = textRepository.findById(textId)
                 .orElseThrow(() -> new IllegalArgumentException("Text not found"));
 

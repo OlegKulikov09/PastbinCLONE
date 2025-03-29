@@ -1,7 +1,7 @@
-package com.OlegKulikov.pastbinclone.try_1.services;
+package backend.services;
 
-import com.OlegKulikov.pastbinclone.try_1.Repositories.UserRepository;
-import com.OlegKulikov.pastbinclone.try_1.model.User;
+import backend.Repositories.UserRepository;
+import backend.model.User;
 import jakarta.transaction.Transactional;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.OlegKulikov.pastbinclone.try_1;
+package backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

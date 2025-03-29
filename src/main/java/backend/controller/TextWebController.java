@@ -1,14 +1,14 @@
-package com.OlegKulikov.pastbinclone.try_1.controller;
+package backend.controller;
 
-import com.OlegKulikov.pastbinclone.try_1.Repositories.*;
-import com.OlegKulikov.pastbinclone.try_1.model.*;
-import com.OlegKulikov.pastbinclone.try_1.services.RatingService;
-import jakarta.servlet.http.HttpSession;
+import backend.Repositories.CommentRepository;
+import backend.Repositories.TextRepository;
+import backend.Repositories.UserRepository;
+import backend.model.Text;
+import backend.model.User;
+import backend.model.UserComment;
+import backend.services.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -16,9 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller

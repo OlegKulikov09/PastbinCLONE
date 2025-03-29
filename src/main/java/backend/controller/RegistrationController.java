@@ -1,7 +1,7 @@
-package com.OlegKulikov.pastbinclone.try_1.controller;
+package backend.controller;
 
-import com.OlegKulikov.pastbinclone.try_1.model.User;
-import com.OlegKulikov.pastbinclone.try_1.services.MyUserDetailsService;
+import backend.model.User;
+import backend.services.MyUserDetailsService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

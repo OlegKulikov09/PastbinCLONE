@@ -1,8 +1,11 @@
-package com.OlegKulikov.pastbinclone.try_1.controller;
+package backend.controller;
 
-import com.OlegKulikov.pastbinclone.try_1.Repositories.*;
-import com.OlegKulikov.pastbinclone.try_1.model.*;
-import com.OlegKulikov.pastbinclone.try_1.services.MyUserDetailsService;
+import backend.Repositories.TextRepository;
+import backend.Repositories.UserRepository;
+import backend.model.Text;
+import backend.model.User;
+import backend.model.UserDTO;
+import backend.services.MyUserDetailsService;
 import jakarta.persistence.Tuple;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +18,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import java.util.List;
 

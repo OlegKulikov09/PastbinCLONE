@@ -1,4 +1,4 @@
-package com.OlegKulikov.pastbinclone.try_1.model;
+package backend.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

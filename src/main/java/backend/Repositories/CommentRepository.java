@@ -1,6 +1,7 @@
-package com.OlegKulikov.pastbinclone.try_1.Repositories;
+package backend.Repositories;
 
-import com.OlegKulikov.pastbinclone.try_1.model.*;
+import backend.model.Text;
+import backend.model.UserComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.UUID;

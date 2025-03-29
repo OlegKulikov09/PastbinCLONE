@@ -1,6 +1,6 @@
-package com.OlegKulikov.pastbinclone.try_1.Repositories;
+package backend.Repositories;
 
-import com.OlegKulikov.pastbinclone.try_1.model.Text;
+import backend.model.Text;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

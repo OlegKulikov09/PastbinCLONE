@@ -1,10 +1,10 @@
-package com.OlegKulikov.pastbinclone.try_1.services;
+package backend.services;
 
-import com.OlegKulikov.pastbinclone.try_1.Repositories.RatingRepository;
-import com.OlegKulikov.pastbinclone.try_1.Repositories.TextRepository;
-import com.OlegKulikov.pastbinclone.try_1.model.Rating;
-import com.OlegKulikov.pastbinclone.try_1.model.Text;
-import com.OlegKulikov.pastbinclone.try_1.model.User;
+import backend.Repositories.RatingRepository;
+import backend.Repositories.TextRepository;
+import backend.model.Rating;
+import backend.model.Text;
+import backend.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

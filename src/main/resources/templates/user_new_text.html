@@ -2,17 +2,17 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Creat new post</title>
+    <title>Create a post</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
 <div class="container">
-    <h1>Write a text</h1>
+    <h1>Create a post</h1>
     <p th:if="${currentUser}">
-        Your logged as: <span th:text="${currentUser.login}">Login</span>
+        You are logged in as <span th:text="${currentUser.login}">Username</span>
     </p>
     <p th:unless="${currentUser}">
-        You are not authorized. Please, <a href="/login">sign up</a> for creating new posts.
+        You are not logged in, Please<a href="/login">log in</a> to create a new post.
     </p>
     <form th:if="${currentUser}" th:action="@{/texts/create}" th:object="${text}" method="post">
         <div class="form-group">
@@ -23,7 +23,7 @@
             <label for="content">Content</label>
             <textarea id="content" name="content" class="form-control" th:field="*{content}" required></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Create</button>
     </form>
 </div>
 </body>

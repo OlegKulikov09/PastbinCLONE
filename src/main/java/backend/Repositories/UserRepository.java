@@ -1,8 +1,6 @@
-package com.OlegKulikov.pastbinclone.try_1.Repositories;
+package backend.Repositories;
 
-import com.OlegKulikov.pastbinclone.try_1.model.Text;
-import com.OlegKulikov.pastbinclone.try_1.model.User;
-import com.OlegKulikov.pastbinclone.try_1.model.UserDTO;
+import backend.model.User;
 import jakarta.persistence.Tuple;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

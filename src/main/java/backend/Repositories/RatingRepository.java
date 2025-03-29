@@ -1,8 +1,8 @@
-package com.OlegKulikov.pastbinclone.try_1.Repositories;
+package backend.Repositories;
 
-import com.OlegKulikov.pastbinclone.try_1.model.Rating;
-import com.OlegKulikov.pastbinclone.try_1.model.Text;
-import com.OlegKulikov.pastbinclone.try_1.model.User;
+import backend.model.Rating;
+import backend.model.Text;
+import backend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package com.OlegKulikov.pastbinclone.try_1.model;
+package backend.model;
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import jakarta.persistence.*;

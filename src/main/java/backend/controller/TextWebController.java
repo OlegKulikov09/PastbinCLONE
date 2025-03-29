@@ -1,15 +1,14 @@
-package com.OlegKulikov.pastbinclone.try_1.controller;
+package backend.controller;
 
-import com.OlegKulikov.pastbinclone.try_1.Repositories.*;
-import com.OlegKulikov.pastbinclone.try_1.model.*;
-import com.OlegKulikov.pastbinclone.try_1.services.RatingService;
-import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
-import jakarta.servlet.http.HttpSession;
+import backend.Repositories.CommentRepository;
+import backend.Repositories.TextRepository;
+import backend.Repositories.UserRepository;
+import backend.model.Text;
+import backend.model.User;
+import backend.model.UserComment;
+import backend.services.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -17,11 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.UUID;
 
 @Controller
 @RequestMapping("/texts")
@@ -62,14 +57,14 @@ public class TextWebController {
     }
 
     @GetMapping("/{textId}")
-    public String viewText(@PathVariable("textId") String textId, Model model,
+    public String viewText(@PathVariable("textId") int textId, Model model,
                            @AuthenticationPrincipal UserDetails currentUser) {
         Text text = textRepository.findById(textId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid text Id:" + textId));
         if (currentUser != null) {
             User user = getCurrentUser(currentUser);
             model.addAttribute("user", user);
-            model.addAttribute("currentUsername", currentUser.getUsername());
+            model.addAttribute("currentUsername", currentUser.getUsername()); // Это добавляем для использования в шаблоне
         }
         model.addAttribute("text", text);
         List<UserComment> comments = commentRepository.findByText(text);
@@ -77,9 +72,9 @@ public class TextWebController {
         return "view_text";
     }
 
-    @PutMapping("/edit/{textId}")
+    @PostMapping("/edit/{textId}")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public String editText(@PathVariable("textId") String textId,
+    public String editText(@PathVariable("textId") int textId,
                            @RequestParam("title") String title,
                            @RequestParam("content") String content,
                            @AuthenticationPrincipal UserDetails currentUser) {
@@ -98,7 +93,7 @@ public class TextWebController {
 
     @PostMapping("/{textId}/comment")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public String addComment(@PathVariable("textId") String textId,
+    public String addComment(@PathVariable("textId") int textId,
                              @ModelAttribute UserComment userComment,
                              @AuthenticationPrincipal UserDetails currentUser) {
         User user = getCurrentUser(currentUser);
@@ -111,9 +106,9 @@ public class TextWebController {
         return "redirect:/texts/" + textId;
     }
 
-    @DeleteMapping("/delete/{textId}")
+    @PostMapping("/delete/{textId}")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public String deleteText(@PathVariable("textId") String textId,
+    public String deleteText(@PathVariable("textId") int textId,
                              @AuthenticationPrincipal UserDetails currentUser) {
         User user = getCurrentUser(currentUser);
         Text text = textRepository.findById(textId)
@@ -129,7 +124,7 @@ public class TextWebController {
 
     @PostMapping("/{textId}/rate")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public String rateText(@PathVariable String textId,
+    public String rateText(@PathVariable int textId,
                            @AuthenticationPrincipal UserDetails currentUser) {
         User user = getCurrentUser(currentUser);
         ratingService.changeRating(textId, user);
